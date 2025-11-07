@@ -4,13 +4,15 @@ from langchain_pinecone import PineconeVectorStore
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-from pinecone import Pinecone, ServerlessSpec
-from openai import AzureOpenAI
+from pinecone import Pinecone
 
+# ===============================
+# 1️⃣ Load ENV
+# ===============================
 load_dotenv()
 
 # ===============================
-# 1️⃣ Function tools
+# 2️⃣ Function tool demo
 # ===============================
 def check_system_status(device_id: str) -> str:
     status_map = {
@@ -21,7 +23,7 @@ def check_system_status(device_id: str) -> str:
     return status_map.get(device_id, "Device not found.")
 
 # ===============================
-# 2️⃣ Embedding + Pinecone setup
+# 3️⃣ Setup Embedding + Pinecone
 # ===============================
 embedding_model = AzureOpenAIEmbeddings(
     api_key=os.getenv("AZURE_OPENAI_EMBEDDING_API_KEY"),
@@ -31,20 +33,13 @@ embedding_model = AzureOpenAIEmbeddings(
 )
 
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-index_name = "bot-laptop-index"
+index = pc.Index("bot-laptop-index")
 
-if index_name not in [i["name"] for i in pc.list_indexes()]:
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        metric="dotproduct",
-        spec=ServerlessSpec(cloud="aws", region="us-east-1"),
-    )
-
-index = pc.Index(index_name)
+vectorstore = PineconeVectorStore(index=index, embedding=embedding_model, text_key="text")
+retriever = vectorstore.as_retriever()
 
 # ===============================
-# 3️⃣ LangChain setup
+# 4️⃣ Memory + Chain setup
 # ===============================
 chat_llm = AzureChatOpenAI(
     api_key=os.getenv("AZURE_OPENAI_LLM_API_KEY"),
@@ -54,13 +49,11 @@ chat_llm = AzureChatOpenAI(
     temperature=1,
 )
 
-vectorstore = PineconeVectorStore(index=index, embedding=embedding_model, text_key="text")
-retriever = vectorstore.as_retriever()
 memory = ConversationBufferMemory(
     memory_key="chat_history",
-    input_key="question",   # ✅ chỉ đặt ở đây
-    output_key="answer",    # ✅ chỉ đặt ở đây 
-    return_messages=True
+    input_key="question",
+    output_key="answer",
+    return_messages=True,
 )
 
 retrieval_chain = ConversationalRetrievalChain.from_llm(
@@ -72,8 +65,10 @@ retrieval_chain = ConversationalRetrievalChain.from_llm(
 )
 
 # ===============================
-# 4️⃣ Function calling metadata
+# 5️⃣ Function calling handler
 # ===============================
+from openai import AzureOpenAI
+
 functions = [
     {
         "name": "check_system_status",
@@ -95,14 +90,10 @@ def call_function_if_needed(message, user_input, chat_history):
         return check_system_status(args["device_id"]), chat_history
     return None, None
 
-
 def process_user_message(user_input: str, chat_history: list):
-    """Main logic: RAG + function calling."""
-    # 1️⃣ RAG retrieval
     rag_result = retrieval_chain({"question": user_input})
     answer = rag_result["answer"]
 
-    # 2️⃣ Function calling check
     client = AzureOpenAI(
         api_key=os.getenv("AZURE_OPENAI_LLM_API_KEY"),
         azure_endpoint=os.getenv("AZURE_OPENAI_LLM_ENDPOINT"),
@@ -122,7 +113,6 @@ def process_user_message(user_input: str, chat_history: list):
         function_call="auto",
     )
     message = response.choices[0].message
-
     func_result, _ = call_function_if_needed(message, user_input, chat_history)
     final_answer = func_result if func_result else answer
     return final_answer, rag_result

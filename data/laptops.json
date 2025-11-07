@@ -1,0 +1,123 @@
+[
+  {
+    "id": "1",
+    "name": "Gaming Beast Pro",
+    "description": "A high-end gaming laptop with RTX 4080, 32GB RAM, and 1TB SSD. Perfect for hardcore gaming.",
+    "tags": "gaming, high-performance, windows"
+  },
+  {
+    "id": "2",
+    "name": "Business Ultrabook X1",
+    "description": "A lightweight business laptop with Intel i7, 16GB RAM, and long battery life. Great for productivity.",
+    "tags": "business, ultrabook, lightweight"
+  },
+  {
+    "id": "3",
+    "name": "Student Basic",
+    "description": "Affordable laptop with 8GB RAM, 256GB SSD, and a reliable battery. Ideal for students and general use.",
+    "tags": "student, budget, general"
+  },
+  {
+    "id": "4",
+    "name": "Gaming Titan X",
+    "description": "Powerful gaming laptop equipped with RTX 4070, AMD Ryzen 9, and 32GB DDR5 RAM. Designed for smooth 4K gameplay.",
+    "tags": "gaming, high-performance, amd"
+  },
+  {
+    "id": "5",
+    "name": "OfficeMate Slim 14",
+    "description": "Ultra-slim business laptop with Intel i5, 8GB RAM, and fingerprint reader. Great for office tasks and meetings.",
+    "tags": "business, lightweight, productivity"
+  },
+  {
+    "id": "6",
+    "name": "EduBook 13",
+    "description": "Compact and budget-friendly laptop with Celeron N4020, 4GB RAM, and 128GB SSD. Perfect for students.",
+    "tags": "student, budget, chrome"
+  },
+  {
+    "id": "7",
+    "name": "Gaming Nova Z15",
+    "description": "RGB-backlit gaming laptop with RTX 4060, 16GB RAM, and 512GB SSD. Built for immersive gaming sessions.",
+    "tags": "gaming, rtx, rgb"
+  },
+  {
+    "id": "8",
+    "name": "ExecutiveBook Elite 15",
+    "description": "Premium ultrabook with Intel i9, 32GB RAM, and 2TB SSD. Ideal for executives and business travelers.",
+    "tags": "business, premium, ultrabook"
+  },
+  {
+    "id": "9",
+    "name": "StudyGo 12",
+    "description": "Portable student laptop with 6GB RAM and 256GB SSD. Energy-efficient and travel-friendly.",
+    "tags": "student, lightweight, education"
+  },
+  {
+    "id": "10",
+    "name": "Gaming Storm 17",
+    "description": "A 17-inch gaming powerhouse with RTX 4090, 64GB RAM, and liquid cooling system. Ultimate gaming performance.",
+    "tags": "gaming, 17-inch, rtx"
+  },
+  {
+    "id": "11",
+    "name": "ProOffice Flex",
+    "description": "2-in-1 business laptop with touch display, Intel i7, and 1TB SSD. Flexible for presentations and travel.",
+    "tags": "business, convertible, touchscreen"
+  },
+  {
+    "id": "12",
+    "name": "CampusLite Air",
+    "description": "Lightweight laptop with 8GB RAM, 256GB SSD, and fanless cooling. Perfect for schoolwork and online learning.",
+    "tags": "student, portable, silent"
+  },
+  {
+    "id": "13",
+    "name": "GamerEdge 16",
+    "description": "Mid-range gaming laptop with RTX 4050, 16GB RAM, and 1TB SSD. Great value for competitive gamers.",
+    "tags": "gaming, midrange, value"
+  },
+  {
+    "id": "14",
+    "name": "WorkPro X2",
+    "description": "Durable office laptop with Intel i5, 8GB RAM, and spill-resistant keyboard. Made for long work hours.",
+    "tags": "business, durable, productivity"
+  },
+  {
+    "id": "15",
+    "name": "LearnBook Mini",
+    "description": "Small and efficient notebook for students with 4GB RAM and 64GB eMMC storage. Great for basic tasks.",
+    "tags": "student, notebook, budget"
+  },
+  {
+    "id": "16",
+    "name": "Gaming Inferno 17",
+    "description": "High-refresh-rate 240Hz gaming laptop with RTX 4080 and 32GB RAM. Built for esports players.",
+    "tags": "gaming, esports, rtx"
+  },
+  {
+    "id": "17",
+    "name": "EliteOffice 360",
+    "description": "Convertible laptop with 360° hinge, Intel Evo certification, and 16GB RAM. Designed for multitasking professionals.",
+    "tags": "business, 2-in-1, ultrabook"
+  },
+  {
+    "id": "18",
+    "name": "StudentOne 14",
+    "description": "Reliable laptop with AMD Ryzen 3, 8GB RAM, and 256GB SSD. Built for students with tight budgets.",
+    "tags": "student, budget, amd"
+  },
+  {
+    "id": "19",
+    "name": "GamerWave R5",
+    "description": "Stylish gaming notebook with RTX 4070, 1TB SSD, and RGB keyboard. Excellent cooling system.",
+    "tags": "gaming, rtx, cooling"
+  },
+  {
+    "id": "20",
+    "name": "WorkMate Max",
+    "description": "All-day battery business laptop with Intel i7 and 14-inch FHD display. Lightweight and powerful.",
+    "tags": "business, productivity, portable"
+  }
+]
+
