@@ -1,7 +1,11 @@
 streamlit==1.39.0
 python-dotenv==1.0.1
-openai==1.40.3
+
 langchain==0.2.14
+langchain-core==0.2.33
+langchain-community==0.2.11
 langchain-openai==0.1.21
 langchain-pinecone==0.1.2
+
+openai==1.40.3
 pinecone-client==3.2.2
