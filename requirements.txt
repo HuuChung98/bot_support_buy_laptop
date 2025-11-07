@@ -10,9 +10,7 @@ langchain-community==0.2.11
 # --- LangChain Integrations ---
 langchain-openai==0.1.21
 langchain-pinecone==0.1.2
-
 # --- Vector Database & Clients ---
 pinecone-client==3.2.2
-
 # --- Azure OpenAI SDK ---
 openai==1.40.3
