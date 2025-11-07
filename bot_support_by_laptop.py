@@ -2,7 +2,8 @@ import os, json
 from dotenv import load_dotenv
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
+from langchain_community.chains import ConversationalRetrievalChain
+# from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone
 
