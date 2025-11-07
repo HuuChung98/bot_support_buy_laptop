@@ -1,0 +1,46 @@
+# =========================
+# 👨‍💻 Python / Streamlit project
+# =========================
+
+# Environment
+.venv/
+env/
+venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Streamlit cache & secrets
+.streamlit/secrets.toml
+.streamlit/config.toml
+.streamlit/
+
+# Build / Distribution
+build/
+dist/
+*.egg-info/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# dotenv
+.env
+
+# OS files
+*.bak
+*.tmp
