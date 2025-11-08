@@ -43,7 +43,7 @@ if user_input:
     st.session_state.chat_history.append((user_input, final_answer))
 
     # 5️⃣ Hiển thị nguồn (nếu có)
-    if rag_result.get("source_documents"):
-        with st.expander("📚 Retrieved Sources"):
-            for doc in rag_result["source_documents"]:
-                st.write("- ", doc.page_content[:200], "...")
+    # if rag_result.get("source_documents"):
+    #     with st.expander("📚 Retrieved Sources"):
+    #         for doc in rag_result["source_documents"]:
+    #             st.write("- ", doc.page_content[:200], "...")

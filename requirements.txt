@@ -7,4 +7,6 @@ langchain-core==0.3.79
 langchain-openai==0.3.35
 langchain-pinecone==0.2.12
 
+langchain-tavily==0.2.13
+langgraph-prebuilt==0.1.8
 openai==2.6.1

@@ -6,15 +6,18 @@ from langchain_openai import AzureOpenAIEmbeddings, AzureChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from pinecone import Pinecone
+from langchain_tavily import TavilySearch
+from langgraph.prebuilt import create_react_agent
+from openai import AzureOpenAI
 
-# ===============================
+# =========================================
 # 1️⃣ Load ENV
+# =========================================
 load_dotenv()
-# ===============================
 
-# ===============================
+# =========================================
 # 2️⃣ Function tool demo
-# ===============================
+# =========================================
 def check_system_status(device_id: str) -> str:
     status_map = {
         "printer01": "Online and functioning normally.",
@@ -23,9 +26,10 @@ def check_system_status(device_id: str) -> str:
     }
     return status_map.get(device_id, "Device not found.")
 
-# ===============================
+
+# =========================================
 # 3️⃣ Setup Embedding + Pinecone
-# ===============================
+# =========================================
 embedding_model = AzureOpenAIEmbeddings(
     api_key=os.getenv("AZURE_OPENAI_EMBEDDING_API_KEY"),
     azure_endpoint=os.getenv("AZURE_OPENAI_EMBEDDING_ENDPOINT"),
@@ -39,15 +43,23 @@ index = pc.Index("bot-laptop-index")
 vectorstore = PineconeVectorStore(index=index, embedding=embedding_model, text_key="text")
 retriever = vectorstore.as_retriever()
 
-# ===============================
-# 4️⃣ Memory + Chain setup
-# ===============================
+# =========================================
+# 4️⃣ LLM, Memory, Agent setup
+# =========================================
 chat_llm = AzureChatOpenAI(
     api_key=os.getenv("AZURE_OPENAI_LLM_API_KEY"),
     azure_endpoint=os.getenv("AZURE_OPENAI_LLM_ENDPOINT"),
     deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"),
     api_version="2023-05-15",
     temperature=1,
+)
+
+# Tavily Search tool
+tavily_search_tool = TavilySearch(max_results=3, topic="general")
+
+agent = create_react_agent(
+    model=chat_llm,
+    tools=[tavily_search_tool],
 )
 
 memory = ConversationBufferMemory(
@@ -65,11 +77,9 @@ retrieval_chain = ConversationalRetrievalChain.from_llm(
     output_key="answer",
 )
 
-# ===============================
+# =========================================
 # 5️⃣ Function calling handler
-# ===============================
-from openai import AzureOpenAI
-
+# =========================================
 functions = [
     {
         "name": "check_system_status",
@@ -82,6 +92,7 @@ functions = [
     }
 ]
 
+
 def call_function_if_needed(message, user_input, chat_history):
     if not getattr(message, "function_call", None):
         return None, None
@@ -91,10 +102,24 @@ def call_function_if_needed(message, user_input, chat_history):
         return check_system_status(args["device_id"]), chat_history
     return None, None
 
-def process_user_message(user_input: str, chat_history: list):
+
+# =========================================
+# 6️⃣ Fallback logic: if Pinecone insufficient → use agent
+# =========================================
+def process_user_message(user_input: str, chat_history: list, min_vector_hits: int = 2):
+    # --- Step 1: Query Pinecone ---
     rag_result = retrieval_chain({"question": user_input})
     answer = rag_result["answer"]
+    retrieved_docs = rag_result.get("source_documents", [])
 
+    # --- Step 2: If Pinecone insufficient, use agent (Tavily) ---
+    if not retrieved_docs or len(retrieved_docs) < min_vector_hits:
+        print(f"⚠️ Insufficient vector results ({len(retrieved_docs)}). Switching to TavilySearch agent...")
+        agent_response = agent.invoke({"input": user_input})
+        answer = agent_response["output"]
+        rag_result["source_documents"] = ["External search (Tavily) used"]
+
+    # --- Step 3: Azure Function Call check ---
     client = AzureOpenAI(
         api_key=os.getenv("AZURE_OPENAI_LLM_API_KEY"),
         azure_endpoint=os.getenv("AZURE_OPENAI_LLM_ENDPOINT"),
@@ -113,7 +138,9 @@ def process_user_message(user_input: str, chat_history: list):
         functions=functions,
         function_call="auto",
     )
+
     message = response.choices[0].message
     func_result, _ = call_function_if_needed(message, user_input, chat_history)
+
     final_answer = func_result if func_result else answer
     return final_answer, rag_result
