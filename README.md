@@ -1,100 +1,115 @@
 # Laptop Recommendation Chatbot
 
-This project implements an AI-powered chatbot that provides laptop recommendations using Azure OpenAI and Pinecone for vector search capabilities. The chatbot combines RAG (Retrieval Augmented Generation) and function calling to provide accurate and contextual responses.
+An experimental conversational assistant that recommends laptops using:
 
-## Features
+- Azure OpenAI (for embeddings + chat)
+- Pinecone (vector store)
+- LangChain (retrieval + chain wiring)
 
-- Laptop recommendation based on user requirements
-- System status checking functionality
-- Vector search using Pinecone
-- RAG implementation with LangChain
-- Function calling with Azure OpenAI
+This project demonstrates a small Retrieval-Augmented Generation (RAG) pipeline combined with function calling to produce accurate, context-aware recommendations.
 
-## Prerequisites
+## Quick summary
 
-Before running the application, make sure you have:
+- Input: user conversation about needs (usage, budget, preferred features)
+- Retrieval: nearest-neighbor search over laptop descriptions (Pinecone)
+- Response: Azure OpenAI chat model with optional function calls
 
-1. Python 3.8 or higher installed
-2. Azure OpenAI API access
-3. Pinecone API access
+## Requirements
 
-## Required Environment Variables
+- Python 3.8+
+- Access to Azure OpenAI (embeddings + chat deployment)
+- Pinecone account and API key
 
-Create a `.env` file in the project root with the following variables:
+## Environment variables
+
+Create a `.env` file in the project root and set the variables below. Replace `your_*` with actual values.
 
 ```env
+# Embeddings (Azure OpenAI)
 AZURE_OPENAI_EMBEDDING_API_KEY=your_embedding_api_key
 AZURE_OPENAI_EMBEDDING_ENDPOINT=your_embedding_endpoint
-AZURE_OPENAI_EMBEDDING_MODEL=your_embedding_model_name
+AZURE_OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 
+# Chat / LLM (Azure OpenAI)
 AZURE_OPENAI_LLM_API_KEY=your_llm_api_key
 AZURE_OPENAI_LLM_ENDPOINT=your_llm_endpoint
 AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
 
+# Pinecone
 PINECONE_API_KEY=your_pinecone_api_key
 ```
 
+Notes:
+- The exact embedding model name and deployment name depend on your Azure configuration.
+
 ## Installation
 
-1. Clone the repository
-2. Install the required packages:
+1. Create and activate a Python virtual environment (recommended):
 
-```bash
-pip install langchain-pinecone langchain-openai pinecone-client python-dotenv openai
+```powershell
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
 ```
 
-## Project Structure
+2. Install dependencies:
 
-- `bot_support_by_laptop.py`: Main application file
-  - Data preparation and vector storage
-  - Azure OpenAI and Pinecone setup
-  - Function calling implementation
-  - RAG implementation using LangChain
+```powershell
+pip install -r requirements.txt
+```
 
-## Components
+If you don't have `requirements.txt`, install at minimum:
 
-1. **Laptop Data**: Pre-defined laptop information with descriptions and tags
-2. **Embeddings**: Uses Azure OpenAI for generating embeddings
-3. **Vector Storage**: Pinecone for storing and retrieving vector embeddings
-4. **Chat Model**: Azure OpenAI for generating responses
-5. **Function Calling**: Implements specific functions for laptop recommendations and system status checks
+```powershell
+pip install langchain-pinecone langchain-openai pinecone-client python-dotenv openai streamlit
+```
 
-## Running the Application
+## Files you care about
 
-1. Ensure all environment variables are set in the `.env` file
-2. Run the main script:
+- `bot_support_by_laptop.py` — main script: builds embeddings, upserts to Pinecone, sets up LangChain retriever and function metadata, runs example queries, and exposes `process_user_message` used by the UI.
+- `ui.py` — Streamlit UI that provides a simple chat interface and calls `process_user_message`.
+- `data/laptops.json` — (optional) laptop catalog used to build the vector store.
 
-```bash
+## How to run
+
+1. Ensure `.env` is configured and your virtual environment is active.
+
+2. To run the CLI/script demo (predefined queries):
+
+```powershell
 python bot_support_by_laptop.py
 ```
 
-The script will:
-1. Initialize the vector store with laptop data
-2. Process a set of predefined queries
-3. Display both RAG-based and function-calling-based responses
+3. To run the Streamlit UI (recommended for interactive chat):
 
-## Example Queries
+```powershell
+streamlit run ui.py
+```
 
-The system comes with predefined test queries:
-- Lightweight laptop recommendation for business trips
-- Gaming laptop with high-end graphics
-- Budget laptop for students
+Open the Streamlit URL printed in your terminal (usually `http://localhost:8501`).
 
-## Functions Available
+## Expected behavior
 
-1. `recommend_laptop`: Suggests laptops based on:
-   - Usage purpose
-   - Budget range
-   - Preferred tags
+- On first run the script creates a Pinecone index (if missing), computes embeddings for the small laptop dataset, and upserts them.
+- The demo queries show RAG answers and may also invoke function-calling logic.
+- The Streamlit UI stores chat history in the session and displays RAG + function-call answers.
 
-2. `get_laptop_details`: Retrieves detailed information about a specific laptop
+## Troubleshooting
 
-3. `check_system_status`: Checks the status of IT devices
+- Authentication errors: confirm the correct API keys/endpoints in `.env`.
+- Pinecone index errors: ensure the `PINECONE_API_KEY` is valid and your Pinecone project/region match the script assumptions.
+- Azure deployment errors: check the `AZURE_OPENAI_DEPLOYMENT_NAME` and model availability.
 
-## Architecture
+## Next improvements (suggested)
 
-The system uses a dual-approach for generating responses:
-1. RAG (Retrieval Augmented Generation) using LangChain
-2. Function calling through Azure OpenAI
+- Add a small script to re-index `data/laptops.json` on-demand.
+- Add unit tests for `process_user_message` and function handlers.
+- Improve error handling and logging for API calls.
 
-This combination provides both context-aware responses and structured data handling capabilities.
+## License
+
+MIT-style. Use as you wish for experimentation and learning.
+
+---
+If you'd like, I can also:
+- scan other project files and translate remaining non-English comments to English, or
+- add a short `requirements.txt` and a simple re-index script.
+Tell me which you'd prefer.
