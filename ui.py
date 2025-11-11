@@ -1,19 +1,20 @@
 import streamlit as st
 from bot_support_by_laptop import process_user_message
 
+# Set Streamlit page and header
 st.set_page_config(page_title="💻 Copilot RAG", page_icon="🤖", layout="wide")
 
 st.markdown("<h1 style='text-align:center;'>💬 Laptop Copilot Assistant</h1>", unsafe_allow_html=True)
 st.write("A Conversational RAG + Function Calling assistant powered by Azure OpenAI & Pinecone")
 
 # =====================================
-# State lưu lịch sử chat
+# State: store chat history
 # =====================================
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 # =====================================
-# Render lịch sử cũ (trước khi người dùng gửi mới)
+# Render previous chat history (before the user sends a new message)
 # =====================================
 for q, a in st.session_state.chat_history:
     with st.chat_message("user"):
@@ -22,27 +23,27 @@ for q, a in st.session_state.chat_history:
         st.markdown(a)
 
 # =====================================
-# Xử lý tin nhắn mới
+# Handle new incoming message
 # =====================================
 user_input = st.chat_input("Type your message...")
 
 if user_input:
-    # 1️⃣ Hiển thị ngay câu hỏi người dùng
+    # 1️⃣ Immediately display the user's question
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # 2️⃣ Xử lý RAG + function calling
+    # 2️⃣ Process RAG (retrieval) + function calling
     with st.spinner("Thinking..."):
         final_answer, rag_result = process_user_message(user_input, st.session_state.chat_history)
 
-    # 3️⃣ Hiển thị câu trả lời assistant
+    # 3️⃣ Display the assistant's answer
     with st.chat_message("assistant"):
         st.markdown(final_answer)
 
-    # 4️⃣ Lưu vào session
+    # 4️⃣ Save the exchange to session state
     st.session_state.chat_history.append((user_input, final_answer))
 
-    # 5️⃣ Hiển thị nguồn (nếu có)
+    # 5️⃣ Show retrieved sources (if any)
     # if rag_result.get("source_documents"):
     #     with st.expander("📚 Retrieved Sources"):
     #         for doc in rag_result["source_documents"]:
